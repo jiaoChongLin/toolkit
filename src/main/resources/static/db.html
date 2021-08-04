@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>内部开发工具 - 数据库</title>
+    <script src="https://cdn.staticfile.org/jquery/1.9.1/jquery.min.js"></script>
+    <style>
+        table,table tr th, table tr td { border:1px solid #0094ff; }
+        table { width: 200px; min-height: 25px; line-height: 25px; text-align: center; border-collapse: collapse;}
+    </style>
+</head>
+<body style="padding: 20px">
+    <div id = "dbInfo" style="border-bottom: 1px solid; overflow:hidden;">
+        <h2>数据库配置</h2>
+        <span class="rollerShutter">收起/展开</span>
+        <div class="panel">
+            <h3>数据库连接(初始化)</h3>
+            <p>
+                连接(初始化)：所有要操作的数据库，都需要在这里<b>提前初始化</b>, 初始化时会将所有的信息读到内存，以便后面使用<br/>
+                刷新连接：将内存中所有的东西都重新加载到内存
+            </p>
+
+            <div id="allConnDivParentHistory" style="margin-top: 10px;width: 80%;
+                    background-color: #f0f0f0; height: 200px; padding: 10px;
+                    overflow-y : auto;
+
+                "
+                 disabled>
+
+                <h5 style="margin-top: -5px">历史连接</h5>
+                <div id="allConnDivContentHistory"></div>
+            </div>
+
+            <select id="dbTypeSelect" name="dbType">
+                <option name="MYSQL" value="MYSQL">MYSQL</option>
+                <option name="SQLSERVER" value="SQLSERVER">SQLSERVER</option>
+                <option name="ORACLE" value="ORACLE">ORACLE</option>
+                <option name="DM" value="DM">DM</option>
+            </select>
+            <input id="dbNameText" type="text" name="name" value="root" placeholder="用户名"/>
+            <input id="dbPasswordText" type="text" name="password" value="123456" placeholder="密码"/>
+            <input id="dbUrlText" type="text" name="url" placeholder="url" value="jdbc:mysql://127.0.0.1:3306/wethink_sharding_dev?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&autoReconnect=true"/>
+            <input type="button" name="conn" id="initConn" value="连接(初始化)"/>
+            <input type="button" name="refConn" id="refConn" value="刷新连接"/>
+
+            <br/>
+
+            <div id="allConnDivParent" style="margin-top: 10px;width: 80%;
+                    background-color: #f0f0f0; height: 400px; padding: 10px;
+                    overflow-y : auto;
+
+                "
+                 disabled>
+
+                <h5 style="margin-top: -5px">所有连接</h5>
+                <div id="allConnDivContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id = "dbTranslate" style=" border-bottom: 1px solid; margin-top: 30px; overflow:hidden;">
+        <h2>数据库翻译</h2>
+        <span class="rollerShutter">收起/展开</span>
+        <div class="panel">
+            <h3>数据库连接(初始化)</h3>
+
+            <span>请选择要翻译的 mysql 数据源：</span>
+            <select name="dbType" id="dbTypeTranslate">
+<!--                <option name="default" value="default">请选择</option>-->
+            </select>
+            <input type="button" name="translateBtn" id="translateBtn" value="翻译"/>
+            <input type="button" name="getAllTableBtn" id="getAllTableBtn" value="获取全部表"/>
+            <br/>
+
+            <label>
+                <input id="allSelect" type="checkbox" name="allSelect"/>
+                全选/全不选
+            </label>
+            <br/>
+            <div id="allTables" style="background-color: #f0f0f0; padding: 5px; height: 500px;
+                                       overflow-y: auto;
+                                    ">
+            </div>
+
+            <p></p>
+
+            <div style="display:inline-block;
+                width: 30%; background-color: #f0f0f0;">
+                <p>
+                    <label>
+                        <input type="checkbox" name="translate_sqlserver" checked/>
+                        SQLSERVER
+                    </label>
+                </p>
+                <div style="padding: 5px; overflow-x: auto;" id="sqlserverContent"></div>
+            </div>
+            <div style="display:inline-block;
+                width: 30%; background-color: #f0f0f0;">
+                <p>
+                    <label>
+                        <input type="checkbox" name="translate_dm" checked/>
+                        ORACLE
+                    </label>
+                </p>
+                <div style="padding: 5px; overflow-x: auto;" id="oracleContent"></div>
+            </div>
+            <div style="display:inline-block;
+                width: 30%; background-color: #f0f0f0;">
+                <p>
+                    <label>
+                        <input type="checkbox" name="translate_dm" checked/>
+                        DM
+                    </label>
+                </p>
+                <div style="padding: 5px; overflow-x: auto;" id="dmContent"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id = "dbDifference" style="border-bottom: 1px solid;margin-top: 30px; overflow:hidden;">
+        <h2>数据库差异对比</h2>
+        <span class="rollerShutter">收起/展开</span>
+        <div class="panel">
+            <h3>表差异对比</h3>
+            <p>
+                这里将会对比2个数据库各自对比对方所多出的表。
+            </p>
+
+            <span>请选择数据源1：</span>
+            <select name="dbType" id="dbDifference1">
+<!--                <option name="default" value="default">请选择</option>-->
+            </select>
+            <br/>
+
+            <span>请选择数据源2：</span>
+            <select name="dbType" id="dbDifference2">
+<!--                <option name="default" value="default">请选择</option>-->
+            </select>
+            <br/>
+
+            <input type="button" name="translateBtn" id="dbDifferenceBtn" value="对比"/>
+            <br/>
+
+            <div id="differenceContent1" style="display:inline-block; margin-top: 10px; padding: 5px;
+                width: 45%; background-color: #f0f0f0;     word-wrap: break-word;
+    word-break: normal;overflow-y: scroll;">
+            </div>
+            <div id="differenceContent2" style="display:inline-block; margin-top: 10px; padding: 5px;
+                width: 45%; background-color: #f0f0f0;   word-wrap: break-word;
+    word-break: normal;overflow-y: scroll;">
+            </div>
+        </div>
+    </div>
+
+    <div id = "dbSqlExecute" style="border-bottom: 1px solid;margin-top: 30px; overflow:hidden;">
+        <h2>SQL执行</h2>
+        <span class="rollerShutter">收起/展开</span>
+        <div class="panel">
+            <p>
+                这里可以执行数据库的sql
+            </p>
+
+            <span>请选择数据源：</span>
+            <select name="dbType" id="dbSqlExecuteSelect">
+            </select>
+            <input type="button" id="dbSqlExecuteBtn" value="执行" />
+
+            <br/>
+
+            <textarea placeholder="" style=" width: 400px; height: 400px " id="executeText"></textarea>
+            <textarea placeholder="" style=" width: 400px; height: 400px " id="tmpStorageText"></textarea>
+
+            <div id="sqlExecuteMsg" style="width: 100%; height: 600px; overflow-x: auto;"overflow-y: auto;></div>
+        </div>
+    </div>
+
+    <script>
+        var host = "http://localhost:8080/";
+        var rootUrl = host + "db/";
+
+        //页面效果
+        // $(".rollerShutter").attr("type", "up");
+        //展开收起
+        $(".rollerShutter").click(function () {
+             var type =$(this).attr("type");
+
+            if (type == 'up') {
+                //收起
+                $(this).attr("type", "down");
+                $(this).parent("div").css("height", "auto");
+
+
+            } else {
+                //展开
+                $(this).attr("type", "up");
+                $(this).parent("div").css("height", "150px");
+            }
+        });
+
+        $(".rollerShutter").click();
+
+        //开始请求
+        function getDDBUrl(type, name, password, url) {
+            return "username="+name+"&password="+password+"&dataBaseDalect="+type+"&url="+escape(url);
+        }
+
+        //
+
+        //获取全部链接
+        function getAllConnInfo() {
+            $.post(rootUrl + "getAllConnInfo", {}, function (data, status) {
+                if (data && data.code == 200) {
+                    var tmp = '';
+                    var historyListStr = localStorage.getItem("historyUrlList");
+                    var historyList = JSON.parse(historyListStr ? historyListStr : "[]");
+
+                    for (var key in data.data) {
+                        var value = data.data[key];
+
+                        tmp += "<span style='padding-top: 10px'>" + (value.substring(0, 100)) + "</span><br/>";
+
+                        //查看连接释放存在
+                        var isFind = false;
+                        for (var i = 0; i < historyList.length; i++) {
+                            if (historyList[i] == value) {
+                                isFind = true;
+                                break;
+                            }
+                        }
+
+                        if (!isFind) {
+                            historyList[historyList.length] = value;
+                        }
+
+                        localStorage.setItem("historyUrlList", JSON.stringify(historyList));
+
+                        //翻译的下拉
+                        if (value.startsWith("MYSQL")) {
+                            $("#dbTypeTranslate").html($("#dbTypeTranslate").html() +
+                                "<option name=\""+value+"\" value=\""+value+"\">"+(value.substr(0, 100))+"...</option>");
+                        }
+
+                        //差异下拉
+                        $("#dbDifference1").html($("#dbDifference1").html() +
+                            "<option name=\""+value+"\" value=\""+value+"\">"+(value.substr(0, 100))+"...</option>");
+                        $("#dbDifference2").html($("#dbDifference2").html() +
+                            "<option name=\""+value+"\" value=\""+value+"\">"+(value.substr(0, 100))+"...</option>");
+
+                        //翻译的下拉
+                        $("#dbSqlExecuteSelect").html($("#dbSqlExecuteSelect").html() +
+                            "<option name=\""+value+"\" value=\""+value+"\">"+(value.substr(0, 100))+"...</option>");
+                    }
+
+                    $("#allConnDivContent").html(tmp);
+                }
+            });
+        }
+
+        getAllConnInfo();
+
+        //加载历史信息
+        function initHistoryInfo () {
+            var historyListStr = localStorage.getItem("historyUrlList");
+            var historyList = JSON.parse(historyListStr ? historyListStr : "[]");
+            var tmp = '';
+            for (var key in historyList) {
+                var value = historyList[key];
+
+                tmp += "<span class='historySpan' value='"+value+"' style='padding: 5px'>" + (value.substring(0, 100)) + "</span>";
+            }
+            $("#allConnDivContentHistory").html(tmp);
+        }
+
+        initHistoryInfo();
+
+        //初始化 （加入历史信息）
+        $("#initConn").click(function () {
+            var param = getDDBUrl($("#dbTypeSelect").val(),
+                            $("#dbNameText").val(),
+                            $("#dbPasswordText").val(),
+                            $("#dbUrlText").val());
+            $.ajax({
+                type: "GET",
+                url: rootUrl + "initConnInfo"+"?"+param ,
+                success: function (data) {
+                    if (data.code == 200) {
+                        getAllConnInfo();
+
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                error : function (msg) {
+                    alert(msg);
+                }
+            });
+        });
+
+        //刷新连接
+        $("#refConn").click(function () {
+            var param = getDDBUrl($("#dbTypeSelect").val(),
+                $("#dbNameText").val(),
+                $("#dbPasswordText").val(),
+                $("#dbUrlText").val());
+
+            $.post(rootUrl + "refreshConnInfo"+"?"+param, {}, function (data, status) {
+                if (status != 'success') {
+                    alert(data.msg);
+                }
+            });
+        });
+
+        function getUrlMapByJoinName(joinName){
+            var dbType = joinName.substr(0, joinName.indexOf(":"));
+            joinName = joinName.substr(dbType.length + 1);
+            var name = joinName.substr(0, joinName.indexOf(":"));
+            joinName = joinName.substr(name.length + 1);
+            var password = joinName.substr(0, joinName.indexOf(":"));
+            joinName = joinName.substr(password.length + 1);
+            var url = joinName;
+
+            return { 'dbType' : dbType, 'name' :name, 'password' : password, 'url' : url };
+        }
+
+        function getUrlByJoinName(joinName){
+            var map = getUrlMapByJoinName(joinName);
+
+            return getDDBUrl(map["dbType"],
+                map["name"], map["password"], map["url"]);
+        }
+
+        //点击历史记录就补全链接
+        $(".historySpan").click(function () {
+            var historyUrl = $(this).attr("value");
+            var urlMap = getUrlMapByJoinName(historyUrl);
+
+            $("#dbTypeSelect").val(urlMap["dbType"]);
+            $("#dbNameText").val(urlMap["name"]);
+            $("#dbPasswordText").val(urlMap["password"]);
+            $("#dbUrlText").val(unescape(unescape(urlMap["url"])));
+        });
+
+        //获取全部表名
+        $("#getAllTableBtn").click(function () {
+            var val = $("#dbTypeTranslate").val();
+            var param = getUrlByJoinName(val);
+
+            $.post(rootUrl + "getAllTable"+"?"+param, {}, function (data, status) {
+                if (status != 'success') {
+                    alert(data.msg);
+                } else {
+                    $("#allTables").html('');
+                    for (let i = 0; i < data.data.length; i++) {
+                        var value = data.data[i];
+
+                        $("#allTables").html($("#allTables").html()
+                            + "<label style='    margin-left: 5px;    margin-top: 5px;'>"
+                                + "<input type=\"checkbox\" name=\"tableName\" value=\""+value+"\"/>"
+                                + value
+                            + "</label>");
+                    }
+                }
+            });
+        });
+
+        $("#allSelect").click(function () {
+            var flag = $('#allSelect').is(':checked');
+            $("input[name='tableName']").prop("checked",flag);
+        })
+
+        //翻译
+        $("#translateBtn").click(function () {
+            var val = $("#dbTypeTranslate").val();
+            var param = getUrlByJoinName(val);
+
+            var $allSelect = $("input[name='tableName']:checked");
+            if ($allSelect.length == 0) {
+                alert("请选择要翻译的表")
+                return;
+            }
+
+            var dataMap = {};
+            for (let i = 0; i < $allSelect.length; i++) {
+                // dataMap["tableName["+i+"]"] = $allSelect[i].value;
+                dataMap["tables"] = $allSelect[i].value;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: rootUrl + "translateSql" + "?" + param,
+                // contentType: "application/json",
+                data: dataMap,
+                dataType: "json",
+                success: function(data){
+                    if (data.code == 200) {
+                        for (const dataKey in data.data["SQLSERVER"]) {
+                            var value = data.data["SQLSERVER"][dataKey];
+                            $("#sqlserverContent").html ($("#sqlserverContent").html()
+                                + "<pre>"+( value["tableSql"])+"</pre>");
+                            $("#sqlserverContent").html ($("#sqlserverContent").html()
+                                + "<pre>"+( value["indexSqlList"])+"</pre>");
+                            $("#sqlserverContent").html ($("#sqlserverContent").html()
+                                + "<pre>"+( value["commonSqlList"])+"</pre>");
+                        }
+
+                        for (const dataKey in data.data["ORACLE"]) {
+                            var value = data.data["ORACLE"][dataKey];
+                            $("#oracleContent").html ($("#oracleContent").html()
+                                + "<pre>"+( value["tableSql"])+"</pre>");
+                            $("#oracleContent").html ($("#oracleContent").html()
+                                + "<pre>"+( value["indexSqlList"])+"</pre>");
+                            $("#oracleContent").html ($("#oracleContent").html()
+                                + "<pre>"+( value["extendList"])+"</pre>");
+                            $("#oracleContent").html ($("#oracleContent").html()
+                                + "<pre>"+( value["commonSqlList"])+"</pre>");
+                        }
+
+                        for (const dataKey in data.data["DM"]) {
+                            var value = data.data["DM"][dataKey];
+                            $("#dmContent").html ($("#dmContent").html()
+                                + "<pre>"+( value["tableSql"])+"</pre>");
+                            $("#dmContent").html ($("#dmContent").html()
+                                + "<pre>"+( value["indexSqlList"])+"</pre>");
+                            $("#dmContent").html ($("#dmContent").html()
+                                + "<pre>"+( value["commonSqlList"])+"</pre>");
+                        }
+
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                error : function (msg) {
+                    alert(msg);
+                }
+            });
+        })
+
+        function getUrlMapByJoinName(joinName){
+            var dbType = joinName.substr(0, joinName.indexOf(":"));
+            joinName = joinName.substr(dbType.length + 1);
+            var name = joinName.substr(0, joinName.indexOf(":"));
+            joinName = joinName.substr(name.length + 1);
+            var password = joinName.substr(0, joinName.indexOf(":"));
+            joinName = joinName.substr(password.length + 1);
+            var url = joinName;
+
+            return { 'dbType' : dbType, 'name' :name, 'password' : password, 'url' : escape(url) };
+        }
+
+        //差异对比
+        $("#dbDifferenceBtn").click(function () {
+            var dataMap = {};
+            var paraMap = getUrlMapByJoinName($("#dbDifference1").val());
+            var connInfo1 = {
+                "dataBaseDalect" : paraMap["dbType"],
+                "username" : paraMap["name"],
+                "password" : paraMap["password"],
+                "url" : paraMap["url"]
+            };
+            paraMap = getUrlMapByJoinName($("#dbDifference2").val());
+            var connInfo2 = {
+                "dataBaseDalect" : paraMap["dbType"],
+                "username" : paraMap["name"],
+                "password" : paraMap["password"],
+                "url" : paraMap["url"]
+            };
+
+            dataMap["connInfo1"] = connInfo1;
+            dataMap["connInfo2"] = connInfo2;
+
+            $.ajax({
+                type: "POST",
+                url: rootUrl + "getTableDifference" ,
+                contentType:'application/json',
+                data: JSON.stringify(dataMap),
+                dataType: "json",
+                success: function (data) {
+                    if (data.code != 200) {
+                        alert(data.msg);
+                        return;
+                    }
+
+                    data = data.data;
+                    var i = 1;
+                    var html = '';
+                    for (var dataKey in data) {
+                        html = dataKey + "<br/>";
+                        for (let j = 0; j < data[dataKey].length; j++) {
+                            html += "<p  '>"+(data[dataKey][j])+"</p>";
+                        }
+                        $("#differenceContent"+(i++)).html(html);
+
+                    }
+                },
+                error : function (msg) {
+                    alert(msg);
+                }
+            });
+        });
+
+        //获取全部表名
+        $("#dbSqlExecuteBtn").click(function () {
+            var val = $("#dbSqlExecuteSelect").val();
+            var param = getUrlByJoinName(val);
+            var sql = encodeURIComponent($("#executeText").val());
+
+            $.ajax({
+                type: "POST",
+                url: rootUrl + "sqlExecute?" + param ,
+                contentType:'application/json',
+                Accept:'*/*',
+                data: JSON.stringify( {'sql' : sql }) ,
+                dataType: "json",
+                success: function (data) {
+                    if (data.code != 200) {
+                        $("#sqlExecuteMsg").html("<p>" +
+                            " <span>sql >: </span> "+ decodeURIComponent(sql) +
+                            " <br/>"+
+                            " 结果"+data.msg+"</p>"
+                            + $("#sqlExecuteMsg").html());
+                        return;
+                    }
+
+                    var contentHtml = "";
+                    data = data.data;
+                    if (data.type == 1) {
+                        data = data.data;
+                        contentHtml = "<table>";
+
+                        for (var i = 0; i < data.length; i++) {
+                            contentHtml += "<tr>";
+
+                            for (var j = 0; j < data[i].length; j++) {
+                                contentHtml += "<td>";
+                                contentHtml += data[i][j];
+                                contentHtml += "</td>";
+                            }
+                            contentHtml += "</tr>";
+                        }
+
+                        contentHtml += "</table>";
+                        $("#sqlExecuteMsg").html(contentHtml);
+
+                    } else if (data.type == 2 || data.type == 3 || data.type == 4) {
+                        $("#sqlExecuteMsg").html("<p>" +
+                            " <span>sql >: </span> "+ decodeURIComponent(sql) +
+                            " <br/>"+
+                            " 结果 >: 受影响行数 "+data.data+"</p>"
+                            + $("#sqlExecuteMsg").html());
+                        return;
+                    }
+                },
+                error : function (msg) {
+                    $("#sqlExecuteMsg").html(msg + $("#sqlExecuteMsg").html());
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
