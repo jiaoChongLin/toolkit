@@ -26,7 +26,12 @@ public class DataBaseMateDataDao {
      * @return
      */
     public TableInfo getTableInfoByTableName(Connection conn, String tableName) throws SQLException {
-        ResultSet rs = getDatabaseMetaData(conn).getTables(null, null, tableName, null);
+        return getOneMateData(conn, null, null, tableName, null);
+    }
+
+    private TableInfo getOneMateData(Connection conn, String catalog, String schemaPattern,
+                                           String tableNamePattern, String types[]) throws SQLException {
+        ResultSet rs = getDatabaseMetaData(conn).getTables(catalog, schemaPattern, tableNamePattern, types);
         List<TableInfo> list = getTableInfo(rs);
 
         rs.close();
@@ -34,13 +39,27 @@ public class DataBaseMateDataDao {
     }
 
     /**
+     * 返回全部表明.
      * @param conn
      * @return
      */
     public List<TableInfo> getAllTableInfo(Connection conn) throws SQLException {
-        ResultSet rs = getDatabaseMetaData(conn).getTables(null, null, "%", null);
-        List<TableInfo> list = getTableInfo(rs);
+        return getListMateData(conn, null, null, "%", null);
+    }
 
+    /**
+     * 返回指定 schema 全部表名.
+     * @param conn
+     * @return
+     */
+    public List<TableInfo> getAllTableInfo(Connection conn, String schema) throws SQLException {
+        return getListMateData(conn, null, schema, "%", null);
+    }
+
+    private List<TableInfo> getListMateData(Connection conn, String catalog, String schemaPattern,
+                                     String tableNamePattern, String types[]) throws SQLException {
+        ResultSet rs = getDatabaseMetaData(conn).getTables(catalog, schemaPattern, tableNamePattern, types);
+        List<TableInfo> list =getTableInfo(rs);
         rs.close();
         return list;
     }
@@ -54,8 +73,8 @@ public class DataBaseMateDataDao {
         return tableInfo;
     }
 
-    public List<TableInfo> getAllTableInfoDetail(Connection conn) throws SQLException {
-        List<TableInfo> list = getAllTableInfo(conn);
+    public List<TableInfo> getAllTableInfoDetail(Connection conn, String schema) throws SQLException {
+        List<TableInfo> list = getAllTableInfo(conn, schema);
         if (CollectionUtil.isNotEmpty(list)) {
             for (TableInfo item : list) {
                 if ("TABLE".equals(item.getTable_type())) {

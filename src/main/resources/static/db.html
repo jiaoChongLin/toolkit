@@ -52,7 +52,7 @@
                 "
                  disabled>
 
-                <h5 style="margin-top: -5px">所有连接</h5>
+                <h5 style="margin-top: -5px">已初始化的所有连接</h5>
                 <div id="allConnDivContent"></div>
             </div>
         </div>
@@ -84,35 +84,37 @@
 
             <p></p>
 
-            <div style="display:inline-block;
-                width: 30%; background-color: #f0f0f0;">
+<!--            display:inline-block; width: 30%;-->
+            <div style="
+                 background-color: #f0f0f0;">
                 <p>
                     <label>
                         <input type="checkbox" name="translate_sqlserver" checked/>
                         SQLSERVER
                     </label>
                 </p>
-                <div style="padding: 5px; overflow-x: auto;" id="sqlserverContent"></div>
+                <div style="padding: 5px; height: 500px;
+                                       overflow-y: auto;" id="sqlserverContent"></div>
             </div>
-            <div style="display:inline-block;
-                width: 30%; background-color: #f0f0f0;">
+            <div style=" background-color: #f0f0f0;">
                 <p>
                     <label>
                         <input type="checkbox" name="translate_dm" checked/>
                         ORACLE
                     </label>
                 </p>
-                <div style="padding: 5px; overflow-x: auto;" id="oracleContent"></div>
+                <div style="padding: 5px; height: 500px;
+                                       overflow-y: auto;" id="oracleContent"></div>
             </div>
-            <div style="display:inline-block;
-                width: 30%; background-color: #f0f0f0;">
+            <div style="background-color: #f0f0f0; ">
                 <p>
                     <label>
                         <input type="checkbox" name="translate_dm" checked/>
                         DM
                     </label>
                 </p>
-                <div style="padding: 5px; overflow-x: auto;" id="dmContent"></div>
+                <div style="padding: 5px; height: 500px;
+                                       overflow-y: auto;" id="dmContent"></div>
             </div>
         </div>
     </div>
@@ -194,7 +196,7 @@
             } else {
                 //展开
                 $(this).attr("type", "up");
-                $(this).parent("div").css("height", "150px");
+                $(this).parent("div").css("height", "100px");
             }
         });
 
@@ -218,7 +220,7 @@
                     for (var key in data.data) {
                         var value = data.data[key];
 
-                        tmp += "<span style='padding-top: 10px'>" + (value.substring(0, 100)) + "</span><br/>";
+                        tmp += "<p style='padding-top: 10px; background-color: aquamarine;'>" + (value.substring(0, 100)) + "</p><br/>";
 
                         //查看连接释放存在
                         var isFind = false;
@@ -267,7 +269,9 @@
             for (var key in historyList) {
                 var value = historyList[key];
 
-                tmp += "<span class='historySpan' value='"+value+"' style='padding: 5px'>" + (value.substring(0, 100)) + "</span>";
+                tmp += "<p class='historySpan' value='"+value+"' style='padding: 5px; background-color: aquamarine;'>"
+                    + (value.substring(0, 100))
+                    + "</p>";
             }
             $("#allConnDivContentHistory").html(tmp);
         }
@@ -380,20 +384,26 @@
                 return;
             }
 
-            var dataMap = {};
-            for (let i = 0; i < $allSelect.length; i++) {
+            var dataArr = [];
+            for (var i = 0; i < $allSelect.length; i++) {
                 // dataMap["tableName["+i+"]"] = $allSelect[i].value;
-                dataMap["tables"] = $allSelect[i].value;
+                dataArr[dataArr.length] = $allSelect[i].value;
             }
+
+            // {'tables' : dataArr}
 
             $.ajax({
                 type: "POST",
                 url: rootUrl + "translateSql" + "?" + param,
-                // contentType: "application/json",
-                data: dataMap,
+                contentType: "application/json",
+                data: JSON.stringify(dataArr),
                 dataType: "json",
                 success: function(data){
                     if (data.code == 200) {
+                        $("#sqlserverContent").html('');
+                        $("#oracleContent").html('');
+                        $("#dmContent").html('');
+
                         for (const dataKey in data.data["SQLSERVER"]) {
                             var value = data.data["SQLSERVER"][dataKey];
                             $("#sqlserverContent").html ($("#sqlserverContent").html()

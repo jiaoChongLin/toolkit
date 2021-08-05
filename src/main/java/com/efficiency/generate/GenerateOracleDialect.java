@@ -83,13 +83,13 @@ public class GenerateOracleDialect extends AbstractGenerateDialect{
 
         //增加序列
         String suqName = tableInfo.getTable_name() + "_seq";
-        list.add("create sequence " + suqName);
+        list.add("create sequence " + suqName + "; \n");
         list.add("CREATE OR REPLACE TRIGGER "+ (tableInfo.getTable_name()) +"_trigger BEFORE INSERT ON "+(tableInfo.getTable_name())+" \n" +
                 "        FOR EACH ROW \n" +
                 "        WHEN (new."+idCol+" IS NULL) \n" +
                 "        BEGIN \n" +
                 "        SELECT " + (suqName) + ".NEXTVAL INTO :new."+idCol+" FROM DUAL; \n" +
-                "        END");
+                "        END ;");
 
         return list;
     }
@@ -98,10 +98,10 @@ public class GenerateOracleDialect extends AbstractGenerateDialect{
     public List<String> generateCommon(TableInfo tableInfo) {
         List<String> list = new LinkedList<>();
         String tabName = tableInfo.getTable_name();
-        list.add("comment on table " + tabName + " is '" + tableInfo.getRemarks() + "'");
+        list.add("comment on table " + tabName + " is '" + tableInfo.getRemarks() + "' ;");
 
         for (ColunmInfo colunmInfo : tableInfo.getColunmInfos()) {
-            list.add("comment on column " + tabName + "." + colunmInfo.getColumn_name() + " is '" + colunmInfo.getRemarks() + "'");
+            list.add("comment on column " + tabName + "." + colunmInfo.getColumn_name() + " is '" + colunmInfo.getRemarks() + "' ;");
         }
 
         return list;

@@ -79,11 +79,11 @@ public class GenerateSQLServerDialect extends AbstractGenerateDialect {
     @Override
     public List<String> generateCommon(TableInfo tableInfo) {
         List<String> results = new LinkedList<>();
-        String commonSql = "exec sp_addextendedproperty 'MS_Description', N'"+(tableInfo.getRemarks())+"', 'SCHEMA', 'dbo', 'TABLE', '"+(tableInfo.getTable_name())+"'";
+        String commonSql = "exec sp_addextendedproperty 'MS_Description', N'"+(tableInfo.getRemarks())+"', 'SCHEMA', 'dbo', 'TABLE', '"+(tableInfo.getTable_name())+"'; ";
         results.add(commonSql);
 
         List<ColunmInfo> colunmInfos = tableInfo.getColunmInfos();
-        commonSql = "exec sp_addextendedproperty 'MS_Description', N'{commonText}', 'SCHEMA', 'dbo', 'TABLE', '{tableName}', 'COLUMN', '{colName}'";
+        commonSql = "exec sp_addextendedproperty 'MS_Description', N'{commonText}', 'SCHEMA', 'dbo', 'TABLE', '{tableName}', 'COLUMN', '{colName}'; ";
         for (int i = 0; i < colunmInfos.size(); i++) {
             Map<String, String> params = new HashMap<>();
             params.put("commonText", colunmInfos.get(i).getRemarks());

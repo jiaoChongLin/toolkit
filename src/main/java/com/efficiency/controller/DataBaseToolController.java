@@ -67,7 +67,7 @@ public class DataBaseToolController {
      * @return
      */
     @PostMapping("translateSql")
-    public Object translateSql(ConnInfo connInfo,  String[] tables) {
+    public Object translateSql(ConnInfo connInfo, @RequestBody String[] tables) {
         Object result = null;
 
         if (tables == null || tables.length == 0) {

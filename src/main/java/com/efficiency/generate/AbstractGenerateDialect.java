@@ -41,7 +41,7 @@ public abstract class AbstractGenerateDialect implements GenerateDialect {
     @Override
     public List<String> generateIndex(TableInfo tableInfo) {
         List<String> list = new ArrayList<>();
-        String indexSqlTemplate = " CREATE {unique} INDEX {indexName} ON {tableName} ({columnName}) ";
+        String indexSqlTemplate = " CREATE {unique} INDEX {indexName} ON {tableName} ({columnName}) ;";
 
         //检查组合组建，存在就合并为一个
         Map<String, List<IndexInfo>> indexMap = new HashMap();
@@ -74,7 +74,7 @@ public abstract class AbstractGenerateDialect implements GenerateDialect {
             }
 
             Map<String, String> params = new HashMap<>();
-            params.put("unique", "true".equals(indexInfo.getNon_unique()) ? "" : "unique");
+            params.put("unique", "true".equals(indexInfo.getNon_unique()) ? "" : "UNIQUE");
             params.put("indexName", indexInfo.getIndex_name());
             params.put("tableName", tableInfo.getTable_name());
             params.put("columnName", cols);
@@ -103,7 +103,7 @@ public abstract class AbstractGenerateDialect implements GenerateDialect {
 
         String colunms = getColnumSql(tableInfo.getColunmInfos());
 
-        createTable += colunms + " ) ";
+        createTable += colunms + " ); ";
         return StrUtil.format(createTable, params);
     }
 

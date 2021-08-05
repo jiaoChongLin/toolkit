@@ -64,8 +64,19 @@ public class DataBaseMateDataService {
         }
 
         Connection connection = DriverManager.getConnection(connInfo.getUrl(), connInfo.getUsername(), connInfo.getPassword());
-        List<TableInfo> list = dataBaseMateDataDao.getAllTableInfoDetail(connection);
+        String schema = null;
+        switch (connInfo.getDataBaseDalect()) {
+            case ORACLE:
+                schema = connInfo.getUsername().toUpperCase();
+                break;
+//            case DM:
+//            case MYSQL:
+//            case SQLSERVER:
+//                schema = null;
+//                break;
+        }
 
+        List<TableInfo> list = dataBaseMateDataDao.getAllTableInfoDetail(connection, schema);
         DataBaseInfo dataBaseInfo = new DataBaseInfo();
         dataBaseInfo.setConnInfo(connInfo);
         dataBaseInfo.setConnection(connection);
@@ -86,16 +97,16 @@ public class DataBaseMateDataService {
             return Collections.emptySet();
         }
 
-        Set<String> oracleSysTable = new HashSet<>();
-        oracleSysTable.add("DBA_");
-        oracleSysTable.add("DBMS_");
-        oracleSysTable.add("ORDDCM_");
-        oracleSysTable.add("WWV_");
-        oracleSysTable.add("SYS_");
-        oracleSysTable.add("SDO_");
-        oracleSysTable.add("OLD_");
-        oracleSysTable.add("OPATCH_");
-        oracleSysTable.add("OLS_");
+        Set<String> startsWithKey = new HashSet<>();
+//        startsWithKey.add("DBA_");
+//        startsWithKey.add("DBMS_");
+//        startsWithKey.add("ORDDCM_");
+//        startsWithKey.add("WWV_");
+//        startsWithKey.add("SYS_");
+//        startsWithKey.add("SDO_");
+//        startsWithKey.add("OLD_");
+//        startsWithKey.add("OPATCH_");
+//        startsWithKey.add("OLS_");
 
         Set<String> result = new HashSet<>();
         for (TableInfo item : list) {
@@ -103,13 +114,18 @@ public class DataBaseMateDataService {
                 continue;
             }
 
+            if (item.getTable_name().indexOf("$") > -1) {
+                continue;
+            }
+
+            if (item.getTable_name().indexOf("#") > -1) {
+                continue;
+            }
+
             if (connInfo.getDataBaseDalect().equals(DataBaseDalect.ORACLE)) {
-                if (item.getTable_name().indexOf("$") > -1) {
-                    continue;
-                }
 
                 boolean isContinue = false;
-                for (String key : oracleSysTable) {
+                for (String key : startsWithKey) {
                     if (item.getTable_name().startsWith(key)) {
                         isContinue = true;
                         break;

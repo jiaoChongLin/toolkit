@@ -55,7 +55,7 @@ public class ResultHandlerAspect {
             }
 
             String msg = e.getClass() + ":" + e.getMessage();
-            msg += "错误路径：" + stackObj.getClassName()+"."+stackObj.getMethodName()+" 行号："+stackObj.getLineNumber();
+            msg += "\n类的错误路径在：" + stackObj.getClassName()+"."+stackObj.getMethodName()+" 行号："+stackObj.getLineNumber();
             r = R.fail(msg);
         }
 

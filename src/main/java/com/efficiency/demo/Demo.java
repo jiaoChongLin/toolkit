@@ -9,9 +9,9 @@ import java.sql.*;
  */
 public class Demo {
     //输出表名
-    public static void printTableNames(DatabaseMetaData databaseMetaData)throws Exception{
+    public static void printTableNames(DatabaseMetaData databaseMetaData, String schema)throws Exception{
         //获取表名的结果集
-        ResultSet rs = databaseMetaData.getTables(null, null, null, new String[]{"TABLE"});
+        ResultSet rs = databaseMetaData.getTables(null, schema, null, new String[]{"TABLE"});
         while(rs.next()){
             String tableName = rs.getString("TABLE_NAME");
             System.out.println(tableName);
@@ -19,8 +19,8 @@ public class Demo {
     }
 
     //输出列名、类型、注释
-    public static void printColumnInfo(DatabaseMetaData databaseMetaData)throws Exception{
-        ResultSet rs = databaseMetaData.getColumns(null, null, "%", null);
+    public static void printColumnInfo(DatabaseMetaData databaseMetaData, String schema)throws Exception{
+        ResultSet rs = databaseMetaData.getColumns(null, schema, "%", null);
 
         ResultSetMetaData metaData = rs.getMetaData();
 
@@ -56,8 +56,8 @@ public class Demo {
         }
     }
 
-    public static void printTableInfo(DatabaseMetaData databaseMetaData)throws Exception{
-        ResultSet rs = databaseMetaData.getTables(null, null, "%", null);
+    public static void printTableInfo(DatabaseMetaData databaseMetaData, String schema)throws Exception{
+        ResultSet rs = databaseMetaData.getTables(null, schema, "%", null);
         ResultSetMetaData metaData = rs.getMetaData();
 
         while(rs.next()){
@@ -83,15 +83,31 @@ public class Demo {
     }
 
     public static void main(String[] args) throws Exception{
-        Class.forName("com.mysql.jdbc.Driver");
-        String url = "jdbc:mysql://127.0.0.1:3306/wethink_sharding_dev?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&autoReconnect=true";
-        String user = "root";
-        String password = "123456";
+//        Class.forName("com.mysql.jdbc.Driver");
+//        String url = "jdbc:mysql://127.0.0.1:3306/wethink_sharding_dev?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&autoReconnect=true";
+//        String user = "root";
+//        String password = "123456";
+
+//        Class.forName("oracle.jdbc.driver.OracleDriver");
+//        String url = "jdbc:oracle:thin:@192.168.2.182:1521/WETHINK17";
+//        String user = "lms";
+//        String password = "oracle";
+
+//        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//        String url = "jdbc:sqlserver://192.168.2.182:1433;databasename=wethink17";
+//        String user = "sa";
+//        String password = "abc123.com";
+
+        Class.forName("dm.jdbc.driver.DmDriver");
+        String url = "jdbc:dm://192.168.2.167:5235/SYSDBA";
+        String user = "SYSDBA";
+        String password = "cyber1234";
+
         Connection connection = DriverManager.getConnection(url, user, password);
         DatabaseMetaData databaseMetaData = connection.getMetaData();
 
-        printColumnInfo(databaseMetaData);
-//        printTableNames(databaseMetaData);
+        printColumnInfo(databaseMetaData, null);
+//        printTableNames(databaseMetaData, null);
 //        printTableInfo(databaseMetaData);
     }
 }

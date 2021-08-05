@@ -70,10 +70,10 @@ public class GenerateDMDialect extends AbstractGenerateDialect {
 
         List<String> list = new LinkedList<>();
         String tabName = tableInfo.getTable_name();
-        list.add("comment on table \"" + tabName + "\" is '" + tableInfo.getRemarks() + "'");
+        list.add("comment on table \"" + tabName + "\" is '" + tableInfo.getRemarks() + "' ;");
 
         for (ColunmInfo colunmInfo : tableInfo.getColunmInfos()) {
-            list.add("comment on column \"" + tabName + "\".\"" + colunmInfo.getColumn_name() + "\" is '" + colunmInfo.getRemarks() + "'");
+            list.add("comment on column \"" + tabName + "\".\"" + colunmInfo.getColumn_name() + "\" is '" + colunmInfo.getRemarks() + "';");
         }
 
         return list;
