@@ -15,36 +15,49 @@ import java.util.Map;
  * @Version : 1.0
  */
 public class GenerateDMDialect extends AbstractGenerateDialect {
+    /**
+     * 类型映射.
+     */
     Map<String, String> typeMapper = new HashMap<>();
+
+    /**
+     * 默认值映射.
+     */
+    Map<String, String> defaultMapper = new HashMap<>();
 
     public GenerateDMDialect () {
         typeMapper.put("TINYINT", "TINYINT");
         typeMapper.put("SMALLINT", "SMALLINT");
-        typeMapper.put("MEDIUMINT", "INT");
+        typeMapper.put("MEDIUMINT", "INT{size}");
         typeMapper.put("INT", "INT");
-        typeMapper.put("INTEGER", "INTEGER");
+        typeMapper.put("INTEGER", "INTEGER{size}");
         typeMapper.put("BIGINT", "BIGINT");
+        typeMapper.put("BIT", "INTEGER{size}");
+        typeMapper.put("INT UNSIGNED", "INT");
 
         typeMapper.put("FLOAT", "FLOAT");
         typeMapper.put("DOUBLE", "DOUBLE");
-        typeMapper.put("DECIMAL", "DECIMAL");
+        typeMapper.put("DECIMAL", "DECIMAL{size}");
 
         typeMapper.put("DATE", "DATE");
         typeMapper.put("TIME", "TIME");
-        typeMapper.put("YEAR", ""); // 这个不知道
+        typeMapper.put("YEAR", "???"); // 这个不知道
         typeMapper.put("DATETIME", "DATETIME");
         typeMapper.put("TIMESTAMP", "TIMESTAMP");
 
-        typeMapper.put("CHAR", "CHAR");
-        typeMapper.put("VARCHAR", "VARCHAR");
+        typeMapper.put("CHAR", "CHAR{size}");
+        typeMapper.put("VARCHAR", "VARCHAR{size}");
         typeMapper.put("TINYBLOB", "BLOB");
-        typeMapper.put("TINYTEXT", "TEXT");
+        typeMapper.put("TINYTEXT", "TEXT{size}");
         typeMapper.put("BLOB", "BLOB");
-        typeMapper.put("TEXT", "TEXT");
+        typeMapper.put("TEXT", "TEXT{size}");
         typeMapper.put("MEDIUMBLOB", "BLOB");
-        typeMapper.put("MEDIUMTEXT", "TEXT");
+        typeMapper.put("MEDIUMTEXT", "TEXT{size}");
         typeMapper.put("LONGBLOB", "BLOB");
-        typeMapper.put("LONGTEXT", "TEXT");
+        typeMapper.put("LONGTEXT", "TEXT{size}");
+
+        //默认值映射
+        defaultMapper.put("CURRENT_TIMESTAMP", "curdate()");
     }
 
     @Override
@@ -61,6 +74,11 @@ public class GenerateDMDialect extends AbstractGenerateDialect {
     @Override
     public Map<String, String> getTypeMapper() {
         return typeMapper;
+    }
+
+    @Override
+    public Map<String, String> getDefaultMapper() {
+        return defaultMapper;
     }
 
     @Override

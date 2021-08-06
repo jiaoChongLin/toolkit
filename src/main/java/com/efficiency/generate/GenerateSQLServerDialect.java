@@ -16,21 +16,29 @@ import java.util.*;
  * @Version : 1.0
  */
 public class GenerateSQLServerDialect extends AbstractGenerateDialect {
+    /**
+     * 类型映射.
+     */
     Map<String, String> typeMapper = new HashMap<>();
+
+    /**
+     * 默认值映射.
+     */
+    Map<String, String> defaultMapper = new HashMap<>();
 
     public GenerateSQLServerDialect () {
         typeMapper.put("TINYINT", "tinyint");
         typeMapper.put("SMALLINT", "smallint");
-        typeMapper.put("MEDIUMINT", "int");
-        typeMapper.put("INT", "int");
-        typeMapper.put("INTEGER", "int");
-        typeMapper.put("BIGINT", "int");
+        typeMapper.put("MEDIUMINT", "int{size}");
+        typeMapper.put("INT", "int{size}");
+        typeMapper.put("INTEGER", "int{size}");
+        typeMapper.put("BIGINT", "int{size}");
         typeMapper.put("BIT", "bit");
         typeMapper.put("INT UNSIGNED", "int");
 
         typeMapper.put("FLOAT", "float");
         typeMapper.put("DOUBLE", "float");
-        typeMapper.put("DECIMAL", "decimal");
+        typeMapper.put("DECIMAL", "decimal{size}");
 
         typeMapper.put("DATE", "date");
         typeMapper.put("TIME", "time");
@@ -38,16 +46,19 @@ public class GenerateSQLServerDialect extends AbstractGenerateDialect {
         typeMapper.put("DATETIME", "datetime");
         typeMapper.put("TIMESTAMP", "datetime");
 
-        typeMapper.put("CHAR", "nchar");
-        typeMapper.put("VARCHAR", "nvarchar");
-        typeMapper.put("TINYBLOB", "nchar");
-        typeMapper.put("TINYTEXT", "nchar");
+        typeMapper.put("CHAR", "nchar{size}");
+        typeMapper.put("VARCHAR", "nvarchar{size}");
+        typeMapper.put("TINYBLOB", "nchar{size}");
+        typeMapper.put("TINYTEXT", "nchar{size}");
         typeMapper.put("BLOB", "image");
-        typeMapper.put("TEXT", "nvarchar");
+        typeMapper.put("TEXT", "nvarchar{size}");
         typeMapper.put("MEDIUMBLOB", "image");
-        typeMapper.put("MEDIUMTEXT", "ntext");
+        typeMapper.put("MEDIUMTEXT", "ntext{size}");
         typeMapper.put("LONGBLOB", "image");
-        typeMapper.put("LONGTEXT", "ntext");
+        typeMapper.put("LONGTEXT", "ntext{size}");
+
+        //默认值映射
+        defaultMapper.put("CURRENT_TIMESTAMP", "getdate()");
     }
 
     @Override
@@ -74,6 +85,11 @@ public class GenerateSQLServerDialect extends AbstractGenerateDialect {
     @Override
     public Map<String, String> getTypeMapper() {
         return typeMapper;
+    }
+
+    @Override
+    public Map<String, String> getDefaultMapper() {
+        return defaultMapper;
     }
 
     @Override

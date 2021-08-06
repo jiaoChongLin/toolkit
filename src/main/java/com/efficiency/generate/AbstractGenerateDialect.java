@@ -1,6 +1,7 @@
 package com.efficiency.generate;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.efficiency.entity.ColunmInfo;
 import com.efficiency.entity.CompleteTable;
@@ -120,14 +121,14 @@ public abstract class AbstractGenerateDialect implements GenerateDialect {
             colInfo += "{"+tmp+"} ";
 
             tmp = "colType_" + i;
-            params.put(tmp, getType(info.getType_name(), null));
+            params.put(tmp, getType(info.getType_name(), info.getColumn_size()));
             colInfo += "{"+tmp+"}";
 
-            if (StrUtil.isNotEmpty(info.getColumn_size())) {
-                tmp = "colSize_" + i;
-                params.put(tmp, "(" + info.getColumn_size() + ")");
-                colInfo += "{"+tmp+"} ";
-            }
+//            if (StrUtil.isNotEmpty(info.getColumn_size())) {
+//                tmp = "colSize_" + i;
+//                params.put(tmp, "(" + info.getColumn_size() + ")");
+//                colInfo += "{"+tmp+"} ";
+//            }
 
             if (StrUtil.isNotEmpty(info.getIs_autoincrement()) && "YES".equalsIgnoreCase(info.getIs_autoincrement())) {
                 tmp = "colIsAuto_" + i;
@@ -137,7 +138,7 @@ public abstract class AbstractGenerateDialect implements GenerateDialect {
 
             if (StrUtil.isNotEmpty(info.getColumn_def())) {
                 tmp = "colDefault_" + i;
-                params.put(tmp, " default '" + (info.getColumn_def()) + "' ");
+                params.put(tmp, " default " + getDefaultVal(info.getColumn_def()));
                 colInfo += "{"+tmp+"} ";
             }
 
@@ -163,6 +164,31 @@ public abstract class AbstractGenerateDialect implements GenerateDialect {
     public abstract Map<String, String> getTypeMapper();
 
     /**
+     * 返回默认值映射 map.
+     * @return
+     */
+    public abstract Map<String, String> getDefaultMapper();
+
+    /**
+     * 根据返回值获取翻译后的返回值.
+     * @param type
+     * @param size
+     * @return
+     */
+    public String getDefaultVal(String defaultVal) {
+        String result = getDefaultMapper().get(defaultVal);
+        if (StrUtil.isNotEmpty(result)) {
+            return result;
+        }
+
+        if (NumberUtil.isNumber(defaultVal)) {
+            return defaultVal;
+        }
+
+        return "'" + defaultVal + "'";
+    }
+
+    /**
      * 根据类型返回指定数据库对应的数据类型.
      * @param type
      * @param size
@@ -174,6 +200,16 @@ public abstract class AbstractGenerateDialect implements GenerateDialect {
             return "???";    //默认无法映射
         }
 
-        return StrUtil.isEmpty(size) ? result : result + "(" + size + ")";
+        if (StrUtil.isEmpty(size)) {
+            return result;
+        } else {
+            if (result.indexOf("{size}") == -1) {
+                return result;
+            } else {
+                Map<String, String> param = new HashMap<>();
+                param.put("size", "("+size+")");
+                return StrUtil.format(result, param);
+            }
+        }
     }
 }

@@ -60,7 +60,7 @@ public class DataBaseToolService {
 
         if (!CollectionUtil.isEmpty(tablelNameList)) {
             for (TableInfo item : list) {
-                if (tablelNameList.contains(item.getTable_name())) {
+                if (tablelNameList.contains(item.getTable_name().toLowerCase())) {
                     tranList.add(item);
                 }
             }

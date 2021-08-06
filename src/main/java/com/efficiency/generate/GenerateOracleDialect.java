@@ -14,7 +14,15 @@ import java.util.*;
  * @Version : 1.0
  */
 public class GenerateOracleDialect extends AbstractGenerateDialect{
+    /**
+     * 类型映射.
+     */
     Map<String, String> typeMapper = new HashMap<>();
+
+    /**
+     * 默认值映射.
+     */
+    Map<String, String> defaultMapper = new HashMap<>();
 
     public GenerateOracleDialect () {
         typeMapper.put("TINYINT", "INT");
@@ -23,10 +31,12 @@ public class GenerateOracleDialect extends AbstractGenerateDialect{
         typeMapper.put("INT", "INT");
         typeMapper.put("INTEGER", "INT");
         typeMapper.put("BIGINT", "INT");
+        typeMapper.put("BIT", "INTEGER{size}");
+        typeMapper.put("INT UNSIGNED", "INT");
 
         typeMapper.put("FLOAT", "FLOAT");
         typeMapper.put("DOUBLE", "FLOAT");
-        typeMapper.put("DECIMAL", "NUMBER");
+        typeMapper.put("DECIMAL", "NUMBER{size}");
 
         typeMapper.put("DATE", "DATE");
 //        typeMapper.put("TIME", "???");        //无法翻译
@@ -34,16 +44,19 @@ public class GenerateOracleDialect extends AbstractGenerateDialect{
         typeMapper.put("DATETIME", "DATE");
         typeMapper.put("TIMESTAMP", "TIMESTAMP");
 
-        typeMapper.put("CHAR", "NVARCHAR2");
-        typeMapper.put("VARCHAR", "NVARCHAR2");
-        typeMapper.put("TINYBLOB", "NVARCHAR2");
-        typeMapper.put("TINYTEXT", "NVARCHAR2");
+        typeMapper.put("CHAR", "NVARCHAR2{size}");
+        typeMapper.put("VARCHAR", "NVARCHAR2{size}");
+        typeMapper.put("TINYBLOB", "NVARCHAR2{size}");
+        typeMapper.put("TINYTEXT", "NVARCHAR2{size}");
         typeMapper.put("BLOB", "BLOB");
-        typeMapper.put("TEXT", "NVARCHAR2");
+        typeMapper.put("TEXT", "NVARCHAR2{size}");
         typeMapper.put("MEDIUMBLOB", "BLOB");
         typeMapper.put("MEDIUMTEXT", "NCLOB");
         typeMapper.put("LONGBLOB", "BLOB");
         typeMapper.put("LONGTEXT", "NCLOB");
+
+        //默认值映射
+        defaultMapper.put("CURRENT_TIMESTAMP", "CURRENT_TIMESTAMP");
     }
 
     @Override
@@ -60,6 +73,11 @@ public class GenerateOracleDialect extends AbstractGenerateDialect{
     @Override
     public Map<String, String> getTypeMapper() {
         return typeMapper;
+    }
+
+    @Override
+    public Map<String, String> getDefaultMapper() {
+        return defaultMapper;
     }
 
     @Override
