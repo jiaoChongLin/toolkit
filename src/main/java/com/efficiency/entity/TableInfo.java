@@ -17,5 +17,4 @@ public class TableInfo {
 
     private List<ColunmInfo> colunmInfos;   //列集合
     private List<IndexInfo> indexInfos;   //索引集合
-
 }

@@ -11,7 +11,7 @@
 </head>
 <body style="padding: 20px">
     <div id = "dbInfo" style="border-bottom: 1px solid; overflow:hidden;">
-        <h2>数据库配置</h2>
+        <h2 class="rollerShutter">数据库配置</h2>
         <span class="rollerShutter">收起/展开</span>
         <div class="panel">
             <h3>数据库连接(初始化)</h3>
@@ -59,7 +59,7 @@
     </div>
 
     <div id = "dbTranslate" style=" border-bottom: 1px solid; margin-top: 30px; overflow:hidden;">
-        <h2>数据库翻译</h2>
+        <h2 class="rollerShutter">数据库翻译</h2>
         <span class="rollerShutter">收起/展开</span>
         <div class="panel">
             <h3>数据库连接(初始化)</h3>
@@ -68,8 +68,10 @@
             <select name="dbType" id="dbTypeTranslate">
 <!--                <option name="default" value="default">请选择</option>-->
             </select>
-            <input type="button" name="translateBtn" id="translateBtn" value="翻译"/>
             <input type="button" name="getAllTableBtn" id="getAllTableBtn" value="获取全部表"/>
+            <br/>
+
+            <input type="button" name="translateBtn" id="translateBtn" value="翻译"/>
             <br/>
 
             <label>
@@ -121,7 +123,7 @@
 
 
     <div id = "dbDifference" style="border-bottom: 1px solid;margin-top: 30px; overflow:hidden;">
-        <h2>数据库差异对比</h2>
+        <h2 class="rollerShutter">数据库差异对比</h2>
         <span class="rollerShutter">收起/展开</span>
         <div class="panel">
             <h3>表差异对比</h3>
@@ -156,7 +158,7 @@
     </div>
 
     <div id = "dbSqlExecute" style="border-bottom: 1px solid;margin-top: 30px; overflow:hidden;">
-        <h2>SQL执行</h2>
+        <h2 class="rollerShutter">SQL执行</h2>
         <span class="rollerShutter">收起/展开</span>
         <div class="panel">
             <p>
@@ -173,7 +175,7 @@
             <textarea placeholder="" style=" width: 400px; height: 400px " id="executeText"></textarea>
             <textarea placeholder="" style=" width: 400px; height: 400px " id="tmpStorageText"></textarea>
 
-            <div id="sqlExecuteMsg" style="width: 100%; height: 600px; overflow-x: auto;"overflow-y: auto;></div>
+            <div id="sqlExecuteMsg" style="width: 100%; height: 600px; overflow-x: auto;overflow-y: auto;"></div>
         </div>
     </div>
 
@@ -375,6 +377,16 @@
 
         //翻译
         $("#translateBtn").click(function () {
+            function getContentHtmlByList (list) {
+                var commonVal = '';
+                for (var i = 0; i < list.length; i++) {
+                    commonVal += "<pre>"+(list[i])+"</pre>" ;
+                }
+
+                return commonVal;
+            }
+
+
             var val = $("#dbTypeTranslate").val();
             var param = getUrlByJoinName(val);
 
@@ -408,32 +420,47 @@
                             var value = data.data["SQLSERVER"][dataKey];
                             $("#sqlserverContent").html ($("#sqlserverContent").html()
                                 + "<pre>"+( value["tableSql"])+"</pre>");
-                            $("#sqlserverContent").html ($("#sqlserverContent").html()
-                                + "<pre>"+( value["indexSqlList"])+"</pre>");
-                            $("#sqlserverContent").html ($("#sqlserverContent").html()
-                                + "<pre>"+( value["commonSqlList"])+"</pre>");
+
+                            var commonVal = '';
+                            commonVal = getContentHtmlByList(value["indexSqlList"]);
+                                $("#sqlserverContent").html ($("#sqlserverContent").html()
+                                + commonVal);
+
+                            commonVal = getContentHtmlByList(value["commonSqlList"]);
+                            $("#sqlserverContent").html($("#sqlserverContent").html()
+                                + commonVal);
                         }
 
                         for (const dataKey in data.data["ORACLE"]) {
                             var value = data.data["ORACLE"][dataKey];
                             $("#oracleContent").html ($("#oracleContent").html()
                                 + "<pre>"+( value["tableSql"])+"</pre>");
+
+                            var commonVal = getContentHtmlByList(value["indexSqlList"]);
                             $("#oracleContent").html ($("#oracleContent").html()
-                                + "<pre>"+( value["indexSqlList"])+"</pre>");
+                                + commonVal);
+
+                            commonVal = getContentHtmlByList(value["extendList"]);
                             $("#oracleContent").html ($("#oracleContent").html()
-                                + "<pre>"+( value["extendList"])+"</pre>");
+                                + commonVal);
+
+                            commonVal = getContentHtmlByList(value["commonSqlList"]);
                             $("#oracleContent").html ($("#oracleContent").html()
-                                + "<pre>"+( value["commonSqlList"])+"</pre>");
+                                + commonVal);
                         }
 
                         for (const dataKey in data.data["DM"]) {
                             var value = data.data["DM"][dataKey];
                             $("#dmContent").html ($("#dmContent").html()
                                 + "<pre>"+( value["tableSql"])+"</pre>");
+
+                            var commonVal = getContentHtmlByList(value["indexSqlList"]);
                             $("#dmContent").html ($("#dmContent").html()
-                                + "<pre>"+( value["indexSqlList"])+"</pre>");
-                            $("#dmContent").html ($("#dmContent").html()
-                                + "<pre>"+( value["commonSqlList"])+"</pre>");
+                                + commonVal);
+
+                            commonVal = getContentHtmlByList(value["commonSqlList"]);
+                            $("#dmContent").html($("#sqlserverContent").html()
+                                + commonVal);
                         }
 
                     } else {

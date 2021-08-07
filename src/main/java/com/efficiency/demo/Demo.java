@@ -83,10 +83,10 @@ public class Demo {
     }
 
     public static void main(String[] args) throws Exception{
-//        Class.forName("com.mysql.jdbc.Driver");
-//        String url = "jdbc:mysql://127.0.0.1:3306/wethink_sharding_dev?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&autoReconnect=true";
-//        String user = "root";
-//        String password = "123456";
+        Class.forName("com.mysql.jdbc.Driver");
+        String url = "jdbc:mysql://127.0.0.1:3306/wethink_sharding_dev?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&autoReconnect=true";
+        String user = "root";
+        String password = "123456";
 
 //        Class.forName("oracle.jdbc.driver.OracleDriver");
 //        String url = "jdbc:oracle:thin:@192.168.2.182:1521/WETHINK17";
@@ -98,16 +98,16 @@ public class Demo {
 //        String user = "sa";
 //        String password = "abc123.com";
 
-        Class.forName("dm.jdbc.driver.DmDriver");
-        String url = "jdbc:dm://192.168.2.167:5235/SYSDBA";
-        String user = "SYSDBA";
-        String password = "cyber1234";
+//        Class.forName("dm.jdbc.driver.DmDriver");
+//        String url = "jdbc:dm://192.168.2.167:5235/SYSDBA";
+//        String user = "SYSDBA";
+//        String password = "cyber1234";
 
         Connection connection = DriverManager.getConnection(url, user, password);
         DatabaseMetaData databaseMetaData = connection.getMetaData();
 
-        printColumnInfo(databaseMetaData, null);
+//        printColumnInfo(databaseMetaData, null);
 //        printTableNames(databaseMetaData, null);
-//        printTableInfo(databaseMetaData);
+        printTableInfo(databaseMetaData, null);
     }
 }

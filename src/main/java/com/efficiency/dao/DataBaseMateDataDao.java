@@ -10,8 +10,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 数据库元数据操作.
@@ -98,6 +97,7 @@ public class DataBaseMateDataDao {
 
     private List<TableInfo> getTableInfo(ResultSet rs) throws SQLException {
         List<TableInfo> list = new LinkedList<>();
+        Set<String> tableSet = new HashSet<>();
 
         //获取表
         while(rs.next()){
@@ -106,7 +106,10 @@ public class DataBaseMateDataDao {
             tableInfo.setRemarks(rs.getString("REMARKS"));
             tableInfo.setTable_type(rs.getString("TABLE_TYPE"));
 
-            list.add(tableInfo);
+            if (!tableSet.contains(tableInfo.getTable_name())) {
+                tableSet.add(tableInfo.getTable_name());
+                list.add(tableInfo);
+            }
         }
 
         return list;
