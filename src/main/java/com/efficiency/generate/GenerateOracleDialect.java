@@ -85,7 +85,7 @@ public class GenerateOracleDialect extends AbstractGenerateDialect{
         String idCol = null;
         for (ColunmInfo info : tableInfo.getColunmInfos()) {
             if ("YES".equalsIgnoreCase(info.getIs_autoincrement())) {
-                idCol = info.getIs_autoincrement();
+                idCol = info.getColumn_name();
                 break;
             }
         }
