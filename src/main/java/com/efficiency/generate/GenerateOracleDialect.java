@@ -82,23 +82,19 @@ public class GenerateOracleDialect extends AbstractGenerateDialect{
 
     @Override
     public List<String> getExtendSqlList (TableInfo tableInfo) {
+        String idCol = null;
+        for (ColunmInfo info : tableInfo.getColunmInfos()) {
+            if ("YES".equalsIgnoreCase(info.getIs_autoincrement())) {
+                idCol = info.getIs_autoincrement();
+                break;
+            }
+        }
+
+        if (idCol == null) {
+            return Collections.emptyList();
+        }
+
         List<String> list = new LinkedList<>();
-
-        String idCol = "???";
-
-        //逻辑1：获取所有的唯一列，选第一个做自增
-//        List<String> suspectedList = new LinkedList<>();
-//        if (CollectionUtil.isEmpty(tableInfo.getIndexInfos())) {
-//            for (IndexInfo item : tableInfo.getIndexInfos()) {
-//                if (item.getNon_unique()) {
-//
-//                }
-//            }
-//        }
-
-        //逻辑2：获取第一个列，做自增
-        idCol = tableInfo.getColunmInfos().get(0).getColumn_name();
-
         //增加序列
         String suqName = tableInfo.getTable_name() + "_seq";
         list.add("create sequence " + suqName + "; \n");

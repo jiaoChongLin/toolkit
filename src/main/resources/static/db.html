@@ -27,7 +27,7 @@
                 "
                  disabled>
 
-                <h5 style="margin-top: -5px">历史连接</h5>
+                <h5 style="margin-top: -5px">历史连接(所有初始化成功的连接都会存到 localStore 中，点击会填充下面的数据库信息)</h5>
                 <div id="allConnDivContentHistory"></div>
             </div>
 
@@ -52,7 +52,7 @@
                 "
                  disabled>
 
-                <h5 style="margin-top: -5px">已初始化的所有连接</h5>
+                <h5 style="margin-top: -5px">已初始化的所有连接(所有初始化的连接都会在这显示)</h5>
                 <div id="allConnDivContent"></div>
             </div>
         </div>
@@ -63,8 +63,11 @@
         <span class="rollerShutter">收起/展开</span>
         <div class="panel">
             <h3>数据库连接(初始化)</h3>
-
-            <span>请选择要翻译的 mysql 数据源：</span>
+            <p>
+                这里只能根据 mysql 翻译成 dm、oracle、sqlserver。
+                数据类型 与 默认值： 其中数据库类型翻译与默认值翻译已经可以满足大部分需求，<span style="color: red;">但是需要在实际使用中再去校准的更精确</span><br/>
+            </p>
+            <span>请选择要翻译的 mysql 数据源 ：</span>
             <select name="dbType" id="dbTypeTranslate">
 <!--                <option name="default" value="default">请选择</option>-->
             </select>
@@ -128,18 +131,16 @@
         <div class="panel">
             <h3>表差异对比</h3>
             <p>
-                这里将会对比2个数据库各自对比对方所多出的表。
+                这里将会对比2个数据库各自对比对方所多出的表，可能会出现一些系统表。
             </p>
 
             <span>请选择数据源1：</span>
             <select name="dbType" id="dbDifference1">
-<!--                <option name="default" value="default">请选择</option>-->
             </select>
             <br/>
 
             <span>请选择数据源2：</span>
             <select name="dbType" id="dbDifference2">
-<!--                <option name="default" value="default">请选择</option>-->
             </select>
             <br/>
 
@@ -162,7 +163,7 @@
         <span class="rollerShutter">收起/展开</span>
         <div class="panel">
             <p>
-                这里可以执行数据库的sql
+                这里可以执行数据库的sql (不止查询，包括增删改与创建表、索引、约束)
             </p>
 
             <span>请选择数据源：</span>
@@ -180,7 +181,8 @@
     </div>
 
     <script>
-        var host = "http://localhost:8080/";
+        // var host = "http://localhost:8080/";
+        var host = "/";
         var rootUrl = host + "db/";
 
         //页面效果
